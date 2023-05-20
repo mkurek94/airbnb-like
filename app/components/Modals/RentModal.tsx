@@ -18,6 +18,7 @@ import { CountrySelect } from "../Inputs/CountrySelect";
 import dynamic from "next/dynamic";
 import { Counter } from "../Inputs/Counter";
 import { ImageUpload } from "../Inputs/ImageUpload";
+import axios from "axios";
 
 enum STEPS {
   CATEGORY = 0,
@@ -104,7 +105,27 @@ export const RentModal = () => {
   };
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    if (step !== STEPS.PRICE) {
+      return onNext();
+    }
+
     setIsLoading(true);
+
+    axios
+      .post("/api/listings", data)
+      .then(() => {
+        toast.success("Listing created!");
+        router.refresh();
+        reset();
+        setStep(STEPS.CATEGORY);
+        rentModal.onClose();
+      })
+      .catch(() => {
+        toast.error("Something went wrong.");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   let bodyContent = (
@@ -182,7 +203,59 @@ export const RentModal = () => {
           title="Add a photo of your place"
           subtitle="Show guests what your place looks like!"
         />
-        <ImageUpload value={imageSrc} onChange={(value) => setCustomValue('imageSrc', value)}/>
+        <ImageUpload
+          value={imageSrc}
+          onChange={(value) => setCustomValue("imageSrc", value)}
+        />
+      </div>
+    );
+  }
+
+  if (step === STEPS.DESCRIPTION) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="How would you describe your place?"
+          subtitle="Short and swee works best!"
+        />
+        <Input
+          id="title"
+          label="Title"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+        <hr />
+        <Input
+          id="description"
+          label="Description"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+      </div>
+    );
+  }
+
+  if (step === STEPS.PRICE) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="Now, set your price"
+          subtitle="How much do you charge per night?"
+        />
+        <Input
+          id="price"
+          label="Price"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+          formatPrice
+          type="number"
+        />
       </div>
     );
   }
@@ -195,7 +268,7 @@ export const RentModal = () => {
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}
       onClose={rentModal.onClose}
-      onSubmit={onNext}
+      onSubmit={handleSubmit(onSubmit)}
       secondaryAction={step === STEPS.CATEGORY ? undefined : onBack}
       body={bodyContent}
     />
