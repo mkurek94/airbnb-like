@@ -7,15 +7,15 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 
 import { useCountries } from "@/app/hooks/useCountries";
-import { SafeUser } from "@/app/types";
+import { SafeListing, SafeReservation, SafeUser } from "@/app/types";
 import Image from "next/image";
 import { HeartButton } from "../HeartButton";
 import { Button } from "../Button";
 
 interface ListingCardProps {
-  data: Listing;
+  data: SafeListing;
   currentUser?: SafeUser | null;
-  reservation?: Reservation;
+  reservation?: SafeReservation;
   onAction?: (id: string) => void;
   disabled?: boolean;
   actionLabel?: string;
@@ -53,7 +53,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({
 
   const price = useMemo(() => {
     if (reservation) {
-      return reservation.totlaPrice;
+      return reservation.totalPrice;
     }
 
     return data.price;
