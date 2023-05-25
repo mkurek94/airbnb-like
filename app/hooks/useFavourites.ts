@@ -42,7 +42,7 @@ export const useFavourite = ({ listingId, currentUser }: IUseFavourite) => {
         router.refresh();
         toast.success("Success");
       } catch {
-        toast.success("Something went wrong.");
+        toast.error("Something went wrong.");
       }
     },
     [currentUser, listingId, hasFavourited, loginModal, router]
