@@ -3,11 +3,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLoginModal } from "@/app/hooks/useLoginModal";
-import { Listing, Reservation } from "@prisma/client";
 
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { differenceInCalendarDays, differenceInDays, eachDayOfInterval } from "date-fns";
+import { differenceInDays, eachDayOfInterval } from "date-fns";
 
 import { Container } from "@/app/components/Container";
 import { ListingHead } from "@/app/components/Listings/ListingHead";
@@ -83,8 +82,7 @@ export const ListingClient: React.FC<ListingClientProps> = ({
         toast.success("Listing reserved!");
         setDateRange(initialDateRange);
 
-        // Redirect to /trips
-        router.refresh();
+        router.push("/trips");
       })
       .catch((err) => {
         console.log(err);
